@@ -34,7 +34,7 @@
 #include "sensors.h"
 #include "wod_handling.h"
 #include "sha256.h"
-#include "sysview.h"
+//#include "sysview.h"
 
 #undef __FILE_ID__
 #define __FILE_ID__ 25
@@ -51,7 +51,6 @@ volatile extern uint8_t rx_sync_flag;
 extern UART_HandleTypeDef huart5;
 extern IWDG_HandleTypeDef hiwdg;
 extern struct _comms_data comms_data;
-comms_rf_stat_t comms_stats;
 
 /**
  * Timer that keeps track of the Command and Control phase

@@ -18,7 +18,7 @@
  */
 
 #include "ax25.h"
-#include "log.h"
+//#include "log.h"
 #include <string.h>
 #include "stm32f4xx_hal.h"
 #include "services.h"

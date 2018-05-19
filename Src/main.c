@@ -38,6 +38,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "ax25.h"
 #include "stm32f4xx_hal.h"
 #include "comms_manager.h"
 
@@ -133,7 +134,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  recv_payload(recv_buffer, AX25_MAX_FRAME_LEN,COMMS_DEFAULT_TIMEOUT_MS);
+	  recv_payload(recv_buffer, AX25_MAX_FRAME_LEN, COMMS_DEFAULT_TIMEOUT_MS);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
