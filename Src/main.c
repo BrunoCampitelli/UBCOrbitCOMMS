@@ -38,9 +38,10 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "ax25.h"
 #include "stm32f4xx_hal.h"
-#include "comms_manager.h"
+#include "cc112x_spi.h"
+#include "debug_funcs.h"
+#include "ccconfig.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -98,6 +99,8 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+	unsigned char message[] = "yee boiii\n";
+	uint8_t spirx;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -128,13 +131,41 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_Delay(1000);
+  /* TX Pins RESETN_TX, PA_CTRL_PIN, CSN1 */
+  HAL_GPIO_WritePin (GPIOA, RESETN_TX_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin (PA_CNTRL_GPIO_Port, PA_CNTRL_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin (GPIOA, GPIO_PIN_15, GPIO_PIN_SET);
+
+  /* RX Pins RESETN_RX, CSN2 */
+  HAL_GPIO_WritePin (GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+  HAL_GPIO_WritePin (GPIOE, GPIO_PIN_15, GPIO_PIN_SET);
+
+  HAL_Delay(1000);
+
+  if(cc_rx_Start()<0) HAL_UART_Transmit(&huart3,"rx read error", sizeof("rx read error"), 100);
+  if(cc_tx_Start()<0) HAL_UART_Transmit(&huart3,"Tx read error", sizeof("Tx read error"), 100);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
-	  recv_payload(recv_buffer, AX25_MAX_FRAME_LEN, COMMS_DEFAULT_TIMEOUT_MS);
+  {	  HAL_UART_Transmit(&huart3,"LOOP START\n", sizeof("LOOP START\n"), 100);
+  sprintf(message,"byte:%d\n  ",cc_tx_cmd(SNOP)&0xF0);
+  HAL_UART_Transmit(&huart3,message, sizeof(message), 100);
+	  cc_tx_wr_reg(FIFOW,5);
+	  sprintf(message,"byte:%d\n  ",cc_tx_cmd(STX)&0xF0);
+	  HAL_UART_Transmit(&huart3,message, sizeof(message), 100);
+	  cc_tx_cmd(SNOP);
+	   while((cc_tx_cmd(SNOP)&0xF0)==(MTX&0xF0));
+	   sprintf(message,"byte:%d\n  ",cc_tx_cmd(SNOP)&0xF0);
+	   HAL_UART_Transmit(&huart3,message, sizeof(message), 100);
+	   cc_tx_cmd(SFTX);
+
+	  HAL_UART_Transmit(&huart3,"byte sent", sizeof("byte sent"),100);
+	  HAL_Delay(1000);
+
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
